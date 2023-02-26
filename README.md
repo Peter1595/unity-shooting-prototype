@@ -1,2 +1,2 @@
 # unity-shooting-prototype
-Peter (known as Dan159) first prototype game
+Peter`s (known as Dan159) first Prototype game
