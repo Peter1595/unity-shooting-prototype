@@ -262,6 +262,11 @@ namespace Unity.FPS.Game
                 MuzzleWorldVelocity = (WeaponMuzzle.position - m_LastMuzzlePosition) / Time.deltaTime;
                 m_LastMuzzlePosition = WeaponMuzzle.position;
             }
+
+            if (ShootType == WeaponShootType.RamPage && projectile)
+            {
+                projectile.transform.position = WeaponMuzzle.position;
+            }
         }
 
         void UpdateAmmo()
@@ -427,8 +432,6 @@ namespace Unity.FPS.Game
                     }
                     else if (inputHeld && projectile)
                     {
-                        projectile.transform.position = WeaponMuzzle.position;
-
                         bool usedAmmo = TryUseAmmo(1);
 
                         if (!usedAmmo)

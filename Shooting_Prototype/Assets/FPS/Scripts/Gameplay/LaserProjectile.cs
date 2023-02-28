@@ -31,6 +31,11 @@ namespace Unity.FPS.Gameplay
             return m_ProjectileBase.GetOwner();
         }
 
+        public int GetRamPageStage()
+        {
+            return ramPage.CurrentStageIndex;
+        }
+
         // Start is called before the first frame update
         void OnEnable()
         {

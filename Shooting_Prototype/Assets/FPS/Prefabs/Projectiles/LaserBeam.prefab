@@ -48,9 +48,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c84d155c8025f59459ec0e95c89300e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scaleOverStages:
+  - {x: 0.1, y: 0.1, z: 0.1}
+  - {x: 0.25, y: 0.25, z: 0.25}
+  - {x: 0.75, y: 0.75, z: 0.75}
   beam: {fileID: 1725798600068103421}
   BeamEndBall: {fileID: 1725798599721545536}
   BeamBall: {fileID: 1725798599449988052}
+  HittableLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &4628352208244226621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aae855901678c64bbe54279e1c10a68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxRange: 25
+  MaxRange: 15
   laserBeam: {fileID: 1725798599091089749}
   laserBeamBall: {fileID: 1725798599721545536}
   HittableLayers:
@@ -121,13 +128,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageStages:
   - duration: 3
-    redius: 10
+    redius: 2.5
     damagePerSecond: 25
   - duration: 5
-    redius: 15
+    redius: 5
     damagePerSecond: 75
   - duration: 0
-    redius: 25
+    redius: 7.5
     damagePerSecond: 225
   Damage: 0
   CanRamPage: 0
@@ -138,6 +145,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8970802324241219612}
     m_Modifications:
+    - target: {fileID: 4371360136233611141, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4371360136233611141, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4371360136233611141, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 4371360136736141712, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
         type: 3}
       propertyPath: m_Name
@@ -197,6 +219,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4371360137044052753, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4371360137044052753, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4371360137044052753, guid: 21816acf2626a5a4e8de5ba19aacd0a9,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21816acf2626a5a4e8de5ba19aacd0a9, type: 3}
