@@ -205,12 +205,26 @@ namespace Unity.FPS.Game
 
         public static Vector3Int PickRandomDirection()
         {
-            return _directions[GenerationRandom.RandomIntRange(0, _directions.Count)];
+            Vector3Int[] directions = GetAllDirections();
+
+            return directions[GenerationRandom.RandomIntRange(0, directions.Length)];
+        }
+
+        public static int GetSize()
+        {
+            return 5;
         }
 
         public static Vector3Int[] GetAllDirections()
         {
-            return _directions.ToArray();
+            List<Vector3Int> directions = new List<Vector3Int>();
+
+            foreach (Vector3Int direction in _directions)
+            {
+                directions.Add(direction * GetSize());
+            }
+
+            return directions.ToArray();
         }
 
         public static int GetDirectionsCount()

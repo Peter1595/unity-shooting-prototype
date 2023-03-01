@@ -50,6 +50,8 @@ namespace Unity.FPS.Game
 
             map.Add(position, gameObject);
 
+            gameObject.transform.localScale = Vector3Int.one * Directions.GetSize();
+
             gameObject.transform.parent = Parent.transform;
         }
 

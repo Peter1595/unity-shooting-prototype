@@ -47,12 +47,8 @@ namespace Unity.FPS.Game
             {
                 BoundsInt newRoom = room;
 
-                Debug.Log("old: " + newRoom.min + ",  " + newRoom.size);
-
-                newRoom.min = newRoom.min + new Vector3Int(offset * 2, 0, offset * 2);
+                newRoom.min = newRoom.min + new Vector3Int(offset, 0, offset);
                 newRoom.size = newRoom.size - new Vector3Int(offset, 0, offset);
-
-                Debug.Log("new: " + newRoom.min + ",  " + newRoom.size);
 
                 newRooms.Add(newRoom);
             }
@@ -73,7 +69,8 @@ namespace Unity.FPS.Game
             }
 
             rooms = GenerateRooms(out roomCenters
-                , StartingPosition);
+                , StartingPosition
+                , parameters);
 
             HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
 
@@ -102,8 +99,11 @@ namespace Unity.FPS.Game
             List<BoundsInt> rooms =
                 ProceduralDungeonGeneration.BinarySpacePartitioning(
                     new BoundsInt(StartingPosition
-                    , new Vector3Int(parameters.minDungeonWidth, 0, parameters.minDungeonHeight))
-                    , parameters.minRoomWidth, parameters.minRoomHeight);
+                    , new Vector3Int(parameters.minDungeonWidth, 0, parameters.minDungeonHeight)
+                        * Directions.GetSize())
+                    , parameters.minRoomWidth * Directions.GetSize()
+                        , parameters.minRoomHeight * Directions.GetSize()
+                );
 
             roomCenters = GetCenters(rooms);
 
@@ -114,7 +114,7 @@ namespace Unity.FPS.Game
         {
             HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
 
-            for (int col = 0; col < room.size.z; col++)
+            for (int col = 0; col < room.size.x; col++)
             {
                 for (int row = 0; row < room.size.z; row++)
                 {
