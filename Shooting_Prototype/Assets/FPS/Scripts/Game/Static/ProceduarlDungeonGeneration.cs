@@ -2,12 +2,18 @@ using Codice.Client.BaseCommands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 
 namespace Unity.FPS.Game
 {
     public static class ProceduralDungeonGeneration
     {
+        public static Vector3Int SimpleStepWalk(Vector3Int startingPosition, Vector3Int direction)
+        {
+            return startingPosition + direction;
+        }
+
         public static HashSet<Vector3Int> SimpleRandomWalk(Vector3Int startingPosition, int walkLength)
         {
             HashSet<Vector3Int> path = new HashSet<Vector3Int>();
@@ -18,7 +24,7 @@ namespace Unity.FPS.Game
 
             for (int i = 0; i < walkLength; i++)
             {
-                Vector3Int newPosition = lastPosition + Directions.PickRandomDirection();
+                Vector3Int newPosition = SimpleStepWalk(lastPosition, Directions.PickRandomDirection());
 
                 lastPosition = newPosition;
 
@@ -28,17 +34,15 @@ namespace Unity.FPS.Game
             return path;
         }
 
-        public static List<Vector3Int> RandomWalkCorridor(Vector3Int startPosition, int corridorLength)
+        public static List<Vector3Int> WalkCorridor(Vector3Int startPosition, int corridorLength, Vector3Int direction)
         {
             List<Vector3Int> corridor = new List<Vector3Int>();
-
-            Vector3Int direction = Directions.PickRandomDirection();
 
             Vector3Int currentPosition = startPosition;
 
             corridor.Add(currentPosition);
 
-            for(int i = 0;i < corridorLength;i++)
+            for (int i = 0; i < corridorLength; i++)
             {
                 currentPosition += direction;
 
@@ -46,6 +50,18 @@ namespace Unity.FPS.Game
             }
 
             return corridor;
+        }
+
+        public static List<Vector3Int> WalkCorridorToPoint(Vector3Int startPosition, Vector3Int endPoint)
+        {
+            return WalkCorridor(startPosition
+                , (int)Vector3Int.Distance(startPosition, endPoint)
+                , Directions.GetDirectionToPoint(startPosition, endPoint));
+        }
+
+        public static List<Vector3Int> RandomWalkCorridor(Vector3Int startPosition, int corridorLength)
+        {
+            return WalkCorridor(startPosition, corridorLength, Directions.PickRandomDirection());
         }
 
         public static List<BoundsInt> BinarySpacePartitioning(BoundsInt spaceToSplit, int minWidth, int minHeight)
@@ -60,16 +76,10 @@ namespace Unity.FPS.Game
             {
                 BoundsInt room = roomsQueue.Dequeue();
 
-                Debug.Log("Queuing...: " + room);
-
                 if (room.size.z >= minHeight && room.size.x >= minWidth)
                 {
-                    Debug.Log("Splitting...: " + room);
-
                     if (GenerationRandom.RandomIntRange(0, 100) < 50)
                     {
-                        Debug.Log("start hor");
-
                         if (room.size.z >= minHeight * 2)
                         {
                             SplitHor(minWidth, roomsQueue, room);
@@ -80,15 +90,11 @@ namespace Unity.FPS.Game
                         }
                         else
                         {
-                            Debug.Log("Adding...");
-
                             rooms.Add(room);
                         }
                     }
                     else
                     {
-                        Debug.Log("start ver");
-
                         if (room.size.x >= minWidth * 2)
                         {
                             SplitVer(minWidth, roomsQueue, room);
@@ -99,8 +105,6 @@ namespace Unity.FPS.Game
                         }
                         else
                         {
-                            Debug.Log("Adding...");
-
                             rooms.Add(room);
                         }
                     }
@@ -145,11 +149,59 @@ namespace Unity.FPS.Game
     {
         private static List<Vector3Int> _directions = new List<Vector3Int>
         {
-            new Vector3Int(0,0,1), // FORWARD
-            new Vector3Int(1,0,0), // RIGHT
-            new Vector3Int(0,0,-1), // BACK
-            new Vector3Int(-1,0,0), // LEFT
+            Vector3Int.forward, // FORWARD
+            Vector3Int.right, // RIGHT
+            Vector3Int.back, // BACK
+            Vector3Int.left, // LEFT
         };
+
+        public static bool IsInRange(Vector3Int position, Vector3Int offset, Vector3Int range)
+        {
+            return (
+                (
+                    position.y <= offset.y + (range.y / 2) &&
+                    position.y >= offset.y - (range.y / 2)
+                ) &&
+                (
+                    position.x <= offset.x + (range.x / 2) &&
+                    position.x >= offset.x - (range.x / 2)
+                ) &&
+                (
+                    position.z <= offset.z + (range.z / 2) &&
+                    position.z >= offset.z - (range.z / 2)
+                )
+            );
+        }
+
+        public static Vector3Int GetDirectionToPoint(Vector3Int startPoint, Vector3Int endPoint)
+        {
+            if (endPoint.y > startPoint.y)
+            {
+                return Vector3Int.up;
+            }
+            else if (endPoint.y < startPoint.y)
+            {
+                return Vector3Int.down;
+            }
+            else if (endPoint.x > startPoint.x)
+            {
+                return Vector3Int.right;
+            }
+            else if (endPoint.x < startPoint.x)
+            {
+                return Vector3Int.left;
+            }
+            else if (endPoint.z > startPoint.z)
+            {
+                return Vector3Int.forward;
+            }
+            else if (endPoint.z < startPoint.z)
+            {
+                return Vector3Int.back;
+            }
+
+            return Vector3Int.zero;
+        }
 
         public static Vector3Int PickRandomDirection()
         {
