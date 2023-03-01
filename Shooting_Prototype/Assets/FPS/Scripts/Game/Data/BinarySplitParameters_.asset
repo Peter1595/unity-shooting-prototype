@@ -16,4 +16,4 @@ MonoBehaviour:
   minRoomHeight: 15
   minDungeonWidth: 125
   minDungeonHeight: 125
-  offset: 3
+  offset: 4

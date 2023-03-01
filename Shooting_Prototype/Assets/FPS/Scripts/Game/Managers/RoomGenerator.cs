@@ -16,8 +16,11 @@ namespace Unity.FPS.Game
 
         private void RoomsGeneration()
         {
-            HashSet<Vector3Int> floorPositions = SplitDungeon(StartingPosition
-                , out List<Vector3Int> centers);
+            HashSet<Vector3Int> floorPositions = SplitDungeon(
+                out List<Vector3Int> centers
+                , out List<BoundsInt> rooms
+                , StartingPosition
+                , true);
 
             visualizier.VisualizeFloor(floorPositions);
 
@@ -36,9 +39,32 @@ namespace Unity.FPS.Game
             return centers;
         }
 
+        private List<BoundsInt> ApplyOffsetToRooms(List<BoundsInt> rooms, int offset)
+        {
+            List<BoundsInt> newRooms = new List<BoundsInt>();
+
+            foreach (BoundsInt room in rooms)
+            {
+                BoundsInt newRoom = room;
+
+                Debug.Log("old: " + newRoom.min + ",  " + newRoom.size);
+
+                newRoom.min = newRoom.min + new Vector3Int(offset * 2, 0, offset * 2);
+                newRoom.size = newRoom.size - new Vector3Int(offset, 0, offset);
+
+                Debug.Log("new: " + newRoom.min + ",  " + newRoom.size);
+
+                newRooms.Add(newRoom);
+            }
+
+            return newRooms;
+        }
+
         public HashSet<Vector3Int> SplitDungeon(
-            Vector3Int StartingPosition
-            , out List<Vector3Int> roomCenters
+            out List<Vector3Int> roomCenters
+            , out List<BoundsInt> rooms
+            , Vector3Int StartingPosition
+            , bool generateSimpleRooms = false
             , BinarySplitSO parameters = null)
         {
             if (!parameters)
@@ -46,22 +72,26 @@ namespace Unity.FPS.Game
                 parameters = this.parameters;
             }
 
-            List<BoundsInt> rooms = GenerateRooms(StartingPosition
-                , out roomCenters);
+            rooms = GenerateRooms(out roomCenters
+                , StartingPosition);
 
             HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
 
-            foreach (BoundsInt room in rooms)
+            rooms = ApplyOffsetToRooms(rooms, parameters.offset);
+
+            if (generateSimpleRooms)
             {
-                floorPositions.UnionWith(GenerateRoom(room, parameters.offset));
+                foreach (BoundsInt room in rooms)
+                {
+                    floorPositions.UnionWith(GenerateRoom(room));
+                }
             }
 
             return floorPositions;
         }
 
-        public List<BoundsInt> GenerateRooms(
-            Vector3Int StartingPosition
-            , out List<Vector3Int> roomCenters
+        public List<BoundsInt> GenerateRooms(out List<Vector3Int> roomCenters
+            , Vector3Int StartingPosition
             , BinarySplitSO parameters = null)
         {
             if (!parameters)
@@ -80,13 +110,13 @@ namespace Unity.FPS.Game
             return rooms;
         }
 
-        public HashSet<Vector3Int> GenerateRoom(BoundsInt room, int offset)
+        public HashSet<Vector3Int> GenerateRoom(BoundsInt room)
         {
             HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
 
-            for (int col = offset; col < room.size.x - offset; col++)
+            for (int col = 0; col < room.size.z; col++)
             {
-                for (int row = offset; row < room.size.z - offset; row++)
+                for (int row = 0; row < room.size.z; row++)
                 {
                     floorPositions.Add(room.min + new Vector3Int(col, 0, row));
                 }

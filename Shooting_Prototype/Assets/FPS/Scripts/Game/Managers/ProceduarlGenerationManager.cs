@@ -23,6 +23,8 @@ namespace Unity.FPS.Game
         [SerializeField]
         private SimpleRandomWalkSO roomParameters;
         [SerializeField]
+        private bool useRandomWalk = true;
+        [SerializeField]
         private GeneratingMethod generationMethod;
 
         protected override void RunPrecduarlDungeonGenerator()
@@ -55,24 +57,27 @@ namespace Unity.FPS.Game
 
         private void UseBinarySplit()
         {
-            List<BoundsInt> rooms = roomGenerator.GenerateRooms(StartingPosition
-                , out List<Vector3Int> roomCenters);
+            HashSet<Vector3Int> floorPositions = roomGenerator.SplitDungeon(out List<Vector3Int> roomCenters
+                , out List<BoundsInt> rooms
+                , StartingPosition
+                , !useRandomWalk);
 
-
-            HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
-
-            foreach (BoundsInt room in rooms)
+            if (floorPositions.Count <= 0)
             {
-                HashSet<Vector3Int> roomFloor = GenerateRoom(Vector3Int.RoundToInt(room.center)
-                    , roomParameters);
 
-                foreach (Vector3Int position in roomFloor)
+                foreach (BoundsInt room in rooms)
                 {
-                    if (Directions.IsInRange(position
-                        , Vector3Int.RoundToInt(room.center)
-                        , room.size))
+                    HashSet<Vector3Int> roomFloor = GenerateRoom(Vector3Int.RoundToInt(room.center)
+                        , roomParameters);
+
+                    foreach (Vector3Int position in roomFloor)
                     {
-                        floorPositions.Add(position);
+                        if (Directions.IsInRange(position
+                            , Vector3Int.RoundToInt(room.center)
+                            , room.size))
+                        {
+                            floorPositions.Add(position);
+                        }
                     }
                 }
             }
