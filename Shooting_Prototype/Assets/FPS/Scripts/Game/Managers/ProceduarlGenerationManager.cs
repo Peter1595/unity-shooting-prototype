@@ -87,6 +87,8 @@ namespace Unity.FPS.Game
             visualizier.VisualizeFloor(floorPositions);
 
             WallGenerator.GenerateWalls(floorPositions, visualizier);
+
+            visualizier.ScaleParent();
         }
 
         private HashSet<Vector3Int> ConnectRooms(List<Vector3Int> roomCenters)

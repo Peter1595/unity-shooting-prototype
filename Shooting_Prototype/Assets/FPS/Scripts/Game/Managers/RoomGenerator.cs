@@ -39,8 +39,38 @@ namespace Unity.FPS.Game
             return centers;
         }
 
+        private Vector3Int GetClosestPosition(Vector3Int first, HashSet<Vector3Int> other)
+        {
+            float minDistance = float.MaxValue;
+            Vector3Int closest = Vector3Int.zero;
+
+            foreach (Vector3Int position in other)
+            {
+                float distance = Vector3Int.Distance(position, first);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closest = position;
+                }
+            }
+
+            Debug.Log("closest floor: " + closest + ",  " + first);
+
+            return closest;
+        }
+
+        private Vector3Int GetCenter(BoundsInt room, HashSet<Vector3Int> floor)
+        {
+            Vector3Int center = GetClosestPosition(Vector3Int.RoundToInt(room.center),floor);
+
+            return center;
+        }
+
         private List<BoundsInt> ApplyOffsetToRooms(List<BoundsInt> rooms, int offset)
         {
+            offset *= Directions.GetSize();
+
             List<BoundsInt> newRooms = new List<BoundsInt>();
 
             foreach (BoundsInt room in rooms)
@@ -68,27 +98,32 @@ namespace Unity.FPS.Game
                 parameters = this.parameters;
             }
 
-            rooms = GenerateRooms(out roomCenters
-                , StartingPosition
+            roomCenters = new List<Vector3Int>();
+
+            rooms = GenerateRooms(StartingPosition
                 , parameters);
 
             HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
 
             rooms = ApplyOffsetToRooms(rooms, parameters.offset);
 
-            if (generateSimpleRooms)
+            foreach (BoundsInt room in rooms)
             {
-                foreach (BoundsInt room in rooms)
-                {
-                    floorPositions.UnionWith(GenerateRoom(room));
-                }
+                HashSet<Vector3Int> floor = GenerateRoom(room);
+
+                roomCenters.Add(GetCenter(room, floor));
+
+                floorPositions.UnionWith(floor);
             }
 
-            return floorPositions;
+            if (generateSimpleRooms)
+            {
+                return floorPositions;
+            }
+            return new HashSet<Vector3Int>();
         }
 
-        public List<BoundsInt> GenerateRooms(out List<Vector3Int> roomCenters
-            , Vector3Int StartingPosition
+        public List<BoundsInt> GenerateRooms(Vector3Int StartingPosition
             , BinarySplitSO parameters = null)
         {
             if (!parameters)
@@ -105,8 +140,6 @@ namespace Unity.FPS.Game
                         , parameters.minRoomHeight * Directions.GetSize()
                 );
 
-            roomCenters = GetCenters(rooms);
-
             return rooms;
         }
 
@@ -114,11 +147,11 @@ namespace Unity.FPS.Game
         {
             HashSet<Vector3Int> floorPositions = new HashSet<Vector3Int>();
 
-            for (int col = 0; col < room.size.x; col++)
+            for (int col = 0; col < room.size.x / Directions.GetSize(); col++)
             {
-                for (int row = 0; row < room.size.z; row++)
+                for (int row = 0; row < room.size.z / Directions.GetSize(); row++)
                 {
-                    floorPositions.Add(room.min + new Vector3Int(col, 0, row));
+                    floorPositions.Add(room.min + (new Vector3Int(col, 0, row) * Directions.GetSize()));
                 }
             }
 

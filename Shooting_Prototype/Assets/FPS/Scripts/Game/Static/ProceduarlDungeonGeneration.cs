@@ -42,7 +42,7 @@ namespace Unity.FPS.Game
 
             corridor.Add(currentPosition);
 
-            for (int i = 0; i < corridorLength; i++)
+            for (int i = 0; i < corridorLength; i+=Directions.GetSize())
             {
                 currentPosition += direction;
 
@@ -56,7 +56,7 @@ namespace Unity.FPS.Game
         {
             return WalkCorridor(startPosition
                 , (int)Vector3Int.Distance(startPosition, endPoint)
-                , Directions.GetDirectionToPoint(startPosition, endPoint));
+                , Directions.GetDirectionToPoint(startPosition, endPoint) * Directions.GetSize());
         }
 
         public static List<Vector3Int> RandomWalkCorridor(Vector3Int startPosition, int corridorLength)
@@ -149,10 +149,10 @@ namespace Unity.FPS.Game
     {
         private static List<Vector3Int> _directions = new List<Vector3Int>
         {
-            Vector3Int.forward, // FORWARD
             Vector3Int.right, // RIGHT
             Vector3Int.back, // BACK
             Vector3Int.left, // LEFT
+            Vector3Int.forward, // FORWARD
         };
 
         public static bool IsInRange(Vector3Int position, Vector3Int offset, Vector3Int range)
@@ -212,7 +212,7 @@ namespace Unity.FPS.Game
 
         public static int GetSize()
         {
-            return 5;
+            return 1;
         }
 
         public static Vector3Int[] GetAllDirections()

@@ -12,7 +12,16 @@ namespace Unity.FPS.Game
         private Dictionary<Vector3Int, GameObject> wallMap = new Dictionary<Vector3Int, GameObject>();
 
         public GameObject floorBase;
-        public GameObject wallBase;
+
+        public GameObject wallUpBase;
+        public GameObject wallDownBase;
+        public GameObject wallRightBase;
+        public GameObject wallLeftBase;
+
+        public GameObject wallRightUpBase;
+        public GameObject wallRightDownBase;
+        public GameObject wallLeftUpBase;
+        public GameObject wallLeftDownBase;
 
         GameObject Parent;
 
@@ -21,9 +30,39 @@ namespace Unity.FPS.Game
             VisualizeObjects(floorPositions, floorMap, floorBase);
         }
 
-        public void VisualizeSingleWall(Vector3Int wallPosition)
+        private GameObject ChooseWallBase(string direction)
         {
-            VisualizeSingleObject(wallPosition, wallMap, wallBase);
+            Debug.Log("direction name : " + direction);
+
+            switch (direction)
+            {
+                case "Up":
+                    return wallUpBase;
+                case "Down":
+                    return wallDownBase;
+                case "Right":
+                    return wallRightBase;
+                case "Left":
+                    return wallLeftBase;
+
+                case "RightUp":
+                    return wallRightUpBase;
+                case "RightDown":
+                    return wallRightDownBase;
+                case "LeftUp":
+                    return wallLeftUpBase;
+                case "LeftDown":
+                    return wallLeftDownBase;
+
+                default:
+                    return wallUpBase;
+
+            }
+        }
+
+        public void VisualizeSingleWall(Vector3Int wallPosition, string direction)
+        {
+            VisualizeSingleObject(wallPosition, wallMap, ChooseWallBase(direction));
         }
 
         private void VisualizeObjects(IEnumerable<Vector3Int> positions,
@@ -44,13 +83,9 @@ namespace Unity.FPS.Game
                 Parent.name = "VisualizedDungeon";
             }
 
-            GameObject gameObject = Instantiate(baseObject, position, Quaternion.identity);
-
-            Debug.Log("Visualizing: " + gameObject);
+            GameObject gameObject = Instantiate(baseObject, position, baseObject.transform.rotation);
 
             map.Add(position, gameObject);
-
-            gameObject.transform.localScale = Vector3Int.one * Directions.GetSize();
 
             gameObject.transform.parent = Parent.transform;
         }
@@ -64,11 +99,26 @@ namespace Unity.FPS.Game
 
             map.Clear();
         }
+        internal void ReScaleMap(Dictionary<Vector3Int, GameObject> map)
+        {
+            foreach (GameObject item in map.Values)
+            {
+                item.transform.localScale /= 3;
+            }
+        }
 
         public void Clear()
         {
             ClearMap(floorMap);
             ClearMap(wallMap);
+        }
+
+        public void ScaleParent()
+        {
+            Parent.transform.localScale = Vector3.one * 3;
+
+            ReScaleMap(floorMap);
+            ReScaleMap(wallMap);
         }
     }
 }
