@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4463c0ab722a0b449a5fae1de79dcab3, type: 3}
   m_Name: BinarySplitParameters_
   m_EditorClassIdentifier: 
-  minRoomWidth: 8
-  minRoomHeight: 8
+  minRoomWidth: 50
+  minRoomHeight: 50
   minDungeonWidth: 50
   minDungeonHeight: 50
   offset: 3
