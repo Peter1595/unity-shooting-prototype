@@ -111,12 +111,14 @@ namespace Unity.FPS.AI
         {
             CurrentEnemyWeight += enemy.weight;
 
-            enemy.enemy.onDied += () =>
+            EnemyController newEnemy = Instantiate(enemy.enemy, spawnPoint, Quaternion.identity);
+
+            newEnemy.onDied += () =>
             {
                 EnemyDied(enemy);
             };
 
-            return Instantiate(enemy.enemy, spawnPoint, Quaternion.identity);
+            return newEnemy;
         }
 
         public void SummonEnemies(Bounds spawnArea, SummonEnemyData[] enemies)
