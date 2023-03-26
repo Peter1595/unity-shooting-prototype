@@ -9,6 +9,7 @@ namespace Unity.FPS.Game
         public Vector3 InitialPosition { get; private set; }
         public Vector3 InitialDirection { get; private set; }
         public Vector3 InheritedMuzzleVelocity { get; private set; }
+
         public float InitialCharge { get; private set; }
 
         public UnityAction OnShoot;

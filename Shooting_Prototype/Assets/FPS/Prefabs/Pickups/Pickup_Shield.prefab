@@ -9838,13 +9838,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 765c1299550171e45bff8fcf910bf798, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Pickable: 1
+  Destroyable: 1
   VerticalBobFrequency: 1
   BobbingAmount: 0.3
   RotatingSpeed: 360
   PickupSfx: {fileID: 8300000, guid: 8dfdbc346713580429db9079ad1ff964, type: 3}
   PickupVfxPrefab: {fileID: 18133231791472539, guid: e44fc97440f45e946a0bdbdd460acfb9,
     type: 3}
-  GainAmount: 50
+  GainAmount: 250
 --- !u!1001 &1786913802535391465
 PrefabInstance:
   m_ObjectHideFlags: 0

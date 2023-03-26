@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using Unity.FPS.Gameplay;
 using UnityEngine;
 
-public class CoinDrop : Drop
+namespace Unity.FPS.Gameplay
 {
-    protected override void Start()
+    public class CoinDrop : Drop
     {
-        base.Start();
+        public int coinAmout;
+        protected override void OnClaim(PlayerCharacterController player)
+        {
+            CoinsStat coinsStat = player.GetComponent<CoinsStat>();
 
-        m_Rigidbody.velocity = new Vector3(Random.Range(-0.5f, 0.5f), 1f, Random.Range(-0.5f, 0.5f));
+            if (coinsStat)
+            {
+
+                base.OnClaim(player);
+
+                coinsStat.set(coinsStat.get() + coinAmout);
+
+                Destroy(gameObject);
+            }
+        }
     }
 
-    protected override void OnClaim(PlayerCharacterController player)
-    {
-        base.OnClaim(player);
-
-        
-    }
 }

@@ -6,12 +6,13 @@ namespace Unity.FPS.Gameplay
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public class Pickup : MonoBehaviour
     {
+        public bool Pickable = true;
+        public bool Destroyable = true;
         [Tooltip("Frequency at which the item will move up and down")]
         public float VerticalBobFrequency = 1f;
 
         [Tooltip("Distance the item will move up and down")]
         public float BobbingAmount = 1f;
-
         [Tooltip("Rotation angle per second")] public float RotatingSpeed = 360f;
 
         [Tooltip("Sound played on pickup")] public AudioClip PickupSfx;
@@ -50,6 +51,11 @@ namespace Unity.FPS.Gameplay
 
         void OnTriggerEnter(Collider other)
         {
+            if (!Pickable)
+            {
+                return;
+            }
+
             PlayerCharacterController pickingPlayer = other.GetComponent<PlayerCharacterController>();
 
             if (pickingPlayer != null)
@@ -60,6 +66,20 @@ namespace Unity.FPS.Gameplay
                 evt.Pickup = gameObject;
                 EventManager.Broadcast(evt);
             }
+        }
+        protected void Destroy(GameObject gameObject)
+        {
+            if (!Destroyable)
+            {
+                return;
+            }
+
+            GameObject.Destroy(gameObject);
+        }
+
+        public void Pick(PlayerCharacterController playerCharacterController)
+        {
+            OnPicked(playerCharacterController);
         }
 
         protected virtual void OnPicked(PlayerCharacterController playerController)

@@ -117,10 +117,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea20190d0f79984e99f3951cd3f3791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ImpactVfxLifeTime: 1
+  ImpactVfxLifeTime: 10
   ImpactVfx: {fileID: 7653580726159945996, guid: 7268e5c84a0ec8b45b58dfb9652c5cf6,
     type: 3}
-  ChainVfxLifeTime: 1
+  ChainVfxLifeTime: 10
   ChainVfx: {fileID: 2833082332456323429, guid: 924a848110a5d574ab579d4ae7092842,
     type: 3}
   damage: 125

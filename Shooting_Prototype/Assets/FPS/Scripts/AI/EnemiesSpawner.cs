@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Unity.FPS.Game;
 
 namespace Unity.FPS.AI
 {
@@ -15,6 +16,8 @@ namespace Unity.FPS.AI
 
     public class EnemiesSpawner : MonoBehaviour
     {
+
+
         [SerializeField]
         private Transform Center;
         [SerializeField]
@@ -23,25 +26,15 @@ namespace Unity.FPS.AI
         private List<SummonEnemyData> Enemies;
         //percentage
         [SerializeField]
-        private float timeBetweenWaves;
-        [SerializeField]
         private float timeBetweenEnemySpawn;
         [SerializeField]
         private float StartingMaxEnemyWeight;
+        [SerializeField]
+        private float EnemyWeightMultiplyPerWave;
+        [SerializeField]
+        private MinMaxFloat SpawnRate;
 
-        private int currentWave = 0;
-
-        public int CurrentWave
-        {
-            get
-            {
-                return currentWave;
-            }
-            set
-            {
-                currentWave = value;
-            }
-        }
+        private WaveManager waveManager;
 
         private float maxEnemyWeight;
 
@@ -75,33 +68,12 @@ namespace Unity.FPS.AI
         {
             get
             {
-                return Enemies.FindAll(x => CurrentWave >= x.staringWave
+                return Enemies.FindAll(x => waveManager.CurrentWave >= x.staringWave
                 && CurrentEnemyWeight + x.weight <= MaxEnemyWeight);
             }
         }
 
-        public Vector3 GetHitPosition(Vector3 spawnPosition)
-        {
-            if (Physics.Raycast(spawnPosition + new Vector3(0, 999999, 0), Vector3.down, out RaycastHit hit, float.MaxValue))
-            {
-                return hit.point;
-            }
-
-            return Vector3.zero;
-        }
-
-        public Vector3 GetSpawnPosition(Bounds area)
-        {
-            Vector3 hitPosition = GetHitPosition(area.center +
-                new Vector3(Random.Range(-area.size.x / 2, area.size.x / 2), 0, Random.Range(-area.size.z / 2, area.size.z / 2)));
-
-            if (hitPosition == Vector3.zero)
-            {
-                return GetSpawnPosition(area);
-            }
-
-            return hitPosition;
-        }
+        private Transform PlayerTransform;
 
         void EnemyDied(SummonEnemyData enemy)
         {
@@ -125,23 +97,10 @@ namespace Unity.FPS.AI
         {
             foreach (SummonEnemyData enemy in enemies)
             {
-                Vector3 spawnPoint = GetSpawnPosition(spawnArea);
+                Vector3 spawnPoint = SpawnAreaGenerator.GetSpawnPosition(spawnArea);
 
                 SpawnEnemy(enemy, spawnPoint);
             }
-        }
-
-        public Bounds GetRandomSpawnArea()
-        {
-            Vector3 hitPosition = GetHitPosition(Center.position +
-                new Vector3(Random.Range(-Size.x / 2, Size.x / 2), 0, Random.Range(-Size.z / 2, Size.z / 2)));
-
-            if (hitPosition == Vector3.zero)
-            {
-                return GetRandomSpawnArea();
-            }
-
-            return new Bounds(hitPosition, new Vector3(10, 0, 10));
         }
 
         public SummonEnemyData GetRandomEnemy()
@@ -170,37 +129,40 @@ namespace Unity.FPS.AI
 
         public void EnterWave(int wave)
         {
-            CurrentWave = wave;
-            MaxEnemyWeight *= 1.25f;
+            MaxEnemyWeight = StartingMaxEnemyWeight * (wave * (1 + EnemyWeightMultiplyPerWave));
         }
-
-        float timeToEnterNewWave = 0;
 
         float timeToSummonEnemies = 0;
 
         // Start is called before the first frame update
         void Start()
         {
-            CurrentWave = 0;
             CurrentEnemyWeight = 0;
             MaxEnemyWeight = StartingMaxEnemyWeight;
+
+            PlayerTransformEventReturnData playerTransformEventReturnData =
+            ReturnableEventManager.Broadcast<PlayerTransformEventReturnData>
+            (Events.PlayerTransformEvent);
+
+            EventManager.AddListener((EnteredNewWaveEvent enteredNewWaveEvent) =>
+            {
+                EnterWave(enteredNewWaveEvent.Wave);
+            });
+
+            waveManager = FindObjectOfType<WaveManager>();
+
+            PlayerTransform = playerTransformEventReturnData.Transform;
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (Time.time > timeToEnterNewWave)
-            {
-                timeToEnterNewWave = Time.time + timeBetweenWaves;
-
-                EnterWave(CurrentWave + 1);
-            }
-
             if (Time.time > timeToSummonEnemies)
             {
                 timeToSummonEnemies = Time.time + timeBetweenEnemySpawn;
 
-                SummonEnemies(GetRandomSpawnArea(), GetRandomEnemies(Random.Range(2, 4)));
+                SummonEnemies(SpawnAreaGenerator.GetRandomSpawnArea(PlayerTransform.position, Size)
+                , GetRandomEnemies(Random.Range((int)SpawnRate.Min, (int)SpawnRate.Max)));
             }
         }
     }

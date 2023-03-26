@@ -4937,13 +4937,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 758683a8118592d4a8b5ce4917aa9b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Pickable: 1
+  Destroyable: 1
   VerticalBobFrequency: 1
   BobbingAmount: 0.3
   RotatingSpeed: 360
   PickupSfx: {fileID: 8300000, guid: 8dfdbc346713580429db9079ad1ff964, type: 3}
   PickupVfxPrefab: {fileID: 18133231791472539, guid: e44fc97440f45e946a0bdbdd460acfb9,
     type: 3}
-  JumpBuffRatio: 1
+  JumpBuffRatio: 0.125
 --- !u!1 &2555308429781394603
 GameObject:
   m_ObjectHideFlags: 0

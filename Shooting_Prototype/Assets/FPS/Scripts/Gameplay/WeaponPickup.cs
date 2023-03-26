@@ -23,6 +23,7 @@ namespace Unity.FPS.Gameplay
         protected override void OnPicked(PlayerCharacterController byPlayer)
         {
             PlayerWeaponsManager playerWeaponsManager = byPlayer.GetComponent<PlayerWeaponsManager>();
+
             if (playerWeaponsManager)
             {
                 WeaponController buffedWeapon = playerWeaponsManager.PowerUpWeapon(WeaponPrefab.WeaponName, 0.1f);

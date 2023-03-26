@@ -68,6 +68,7 @@ GameObject:
   - component: {fileID: 6449686686394465367}
   - component: {fileID: 797398738606809810}
   - component: {fileID: 1614318205656627459}
+  - component: {fileID: 794837162000357665}
   m_Layer: 0
   m_Name: Enemy_HoverBot
   m_TagString: Untagged
@@ -364,6 +365,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &794837162000357665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015434656898269652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a1c5c859c9268419066df8b075b647, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Drops:
+  - Prefab: {fileID: 614021833757050021, guid: f50448999e5b129408a21cadf89f7259, type: 3}
+    Weight: 50
+  startingMaxWeight: 100
 --- !u!1 &2201913640410082181
 GameObject:
   m_ObjectHideFlags: 0

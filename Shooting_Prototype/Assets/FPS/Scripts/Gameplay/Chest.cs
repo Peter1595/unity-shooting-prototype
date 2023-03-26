@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.FPS.Game;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Unity.FPS.Gameplay
 {
@@ -20,6 +21,8 @@ namespace Unity.FPS.Gameplay
 
         bool isOpenned = false;
 
+        public UnityAction onOpened;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -35,16 +38,6 @@ namespace Unity.FPS.Gameplay
             Health.OnDie += onOpen;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        void GetDrop()
-        {
-
-        }
 
         void onOpen()
         {
@@ -76,6 +69,8 @@ namespace Unity.FPS.Gameplay
             newBuff.name = "chest buff";
 
             Debug.Log("buff - " + newBuff.name);
+
+            onOpened?.Invoke();
         }
     }
 }
